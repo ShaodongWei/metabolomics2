@@ -1,0 +1,63 @@
+# necessary parameters you have to specify 
+file_in: "input/demo.csv" # input table, accpets csv or xlsx format (abosolute path?)
+input_table_type: # specify the Machine and Software producing the input table
+    - 'Agilent_targeted_metabolomics'
+n_header_lines: 2 # number of header lines of the input table
+file_out: "demo analyzed.xlsx" # only accepts '.xlsx' format. No need to specify path, just need a file name.
+save_data_in_excel: True # True or False, if to save values as excel
+save_plot: True # True or False, if to save pca and CV (coefficient of variation) plots
+show_plot: False # True or False, if to show pca and CV plots
+target_column: # A single (one column a time) column in the input table to analyze
+    - "Final Conc."
+    #- 'Area'
+    #- 'Ratio'
+removing_samples_regular_expression: # samples to remove before any analysis, patterns are regular expression (go to https://regexr.com/ to test your regular expression)
+    - 'Blank'
+    - '^Cal'
+rename_samples_regular_expression: # samples to rename before any analysis, patterns are regular expression
+    from:
+        - RPO[0-9]* # from and to has to be paired in order (e.g. from RPO[0-9]* to RPO)
+        - CP[0-9]*
+    to:
+        - RPO
+        - CP
+sample_info_sequences: # information from the sample naming, delimited by '_'
+    - "Project"
+    - "Project_name"
+    - "Batch"
+    - "Run_number"
+    - "Steno_label"
+    - "Preparation"
+    - "Injection"
+
+
+# batch correction parameters with defaults
+batch_correction_method: "Default" # Default is same as Tommi's method (iqr and median), other options are waiting to be added.
+avoid_negative_values: False # True or False, if True log10(x+1) will be done before batch correction, and then 10**x - 1 will be done.
+batch_correction_loess_fraction: 0.3 # a value from 0 to 1, used in batch correction method 'loess' (check reproduciplity of rpo, extreme values, outlier removing etc.)
+batch_group: "Split" #choose 'Split' (by Run_number) or any of sample_info_sequences
+batch_size: "30" # if batch_groups is 'Split', then batch_size is the split size
+
+
+# outlier truncation parameters with defaults
+max_standard_deviation_outlier: 3 # max allowed number of SD, larger or smaller than that values will be defined as outlier and imputed
+
+
+# missing value imputation parameters with defaults
+missing_value_as_zero: False # True or False, if True negative value after batch correction will be zero, knn imputation step is skipped and all missing values will be zero.
+knn_neighbours: 10 # Default is 10, number of neighbours used for missing value imputation using KNN method
+
+# calculate coefficient of variation and Sample to RPO ratio with defaults
+max_CV: 30 # A number (or Null) to only keep metabolites when CV equal or less than specified, or Null (do nothing)
+min_ratio: 1 # A number (or Null) to only keep metabolites when Sample to RPO ratio equal or larger than specified, or Null (do nothing)
+
+
+# plotting parameters with defaults
+pca_scale_factor: 1 # scaling factor for ellipse in pca plot
+global_text_size: 6 # overal text size in pca plots
+subplot_size: 5 # subplot size (width and height are equal) for pca plots
+pca_remove_control: True # True or False, if to remove samples in PCA plot based on 'pca_remove_pattern'
+pca_remove_pattern: ['CP','RPO'] # if 'pca_remove_control' is True, this pattern will be used to remove samples
+check_metabolite: Null # 'Null', '' (empty), or a list of names e.g. ['A', 'B']
+
+
